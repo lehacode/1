@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh sách việc hàng ngày</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b, #ffd93d);
+            padding: 30px 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .progress-bar {
+            background: rgba(255,255,255,0.3);
+            height: 10px;
+            border-radius: 5px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: white;
+            height: 100%;
+            width: 0%;
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+
+        .todo-section {
+            padding: 20px;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .pending-section {
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #f0f0f0;
+            background: white;
+        }
+
+        .todo-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-color: #667eea;
+        }
+
+        .todo-item.completed {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border-color: #4facfe;
+            animation: completedPulse 0.6s ease-out;
+        }
+
+        @keyframes completedPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .todo-checkbox {
+            width: 24px;
+            height: 24px;
+            margin-right: 15px;
+            cursor: pointer;
+            accent-color: #4facfe;
+            transform: scale(1.2);
+        }
+
+        .todo-text {
+            flex: 1;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .todo-item.completed .todo-text {
+            text-decoration: line-through;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #999;
+            font-style: italic;
+            padding: 20px;
+        }
+
+        .stats {
+            background: #f8f9fa;
+            padding: 20px;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #4facfe;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📝 Việc hàng ngày</h1>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+        
+        <div class="todo-section">
+            <div class="pending-section">
+                <h2 class="section-title">🎯 Cần hoàn thành</h2>
+                <div id="pendingTasks"></div>
+            </div>
+            
+            <div class="completed-section">
+                <h2 class="section-title">✅ Đã hoàn thành</h2>
+                <div id="completedTasks">
+                    <div class="empty-message">Chưa có việc nào được hoàn thành</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-number" id="totalTasks">10</div>
+                <div class="stat-label">Tổng việc</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="completedCount">0</div>
+                <div class="stat-label">Đã xong</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="remainingCount">10</div>
+                <div class="stat-label">Còn lại</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Danh sách việc cần làm
+        const tasks = [
+            "Dọn dẹp chỗ ngủ",
+            "Tắm rửa thay quần áo",
+            "Ăn sáng",
+            "Uống sữa",
+            "Đánh răng",
+            "Đi học",
+            "Học Tiếng anh",
+            "Đọc sách",
+            "Gấp quần áo",
+            "Chùi toilet"
+        ];
+
+        let completedTasks = [];
+
+        // Load dữ liệu đã lưu
+        function loadData() {
+            const saved = localStorage.getItem('dailyTasks');
+            if (saved) {
+                completedTasks = JSON.parse(saved);
+            }
+        }
+
+        // Lưu dữ liệu
+        function saveData() {
+            localStorage.setItem('dailyTasks', JSON.stringify(completedTasks));
+        }
+
+        // Tạo HTML cho một task
+        function createTaskHTML(task, index, isCompleted = false) {
+            return `
+                <div class="todo-item ${isCompleted ? 'completed' : ''}" data-index="${index}">
+                    <input type="checkbox" class="todo-checkbox" ${isCompleted ? 'checked' : ''} 
+                           onchange="toggleTask(${index})">
+                    <span class="todo-text">${task}</span>
+                </div>
+            `;
+        }
+
+        // Render danh sách
+        function renderTasks() {
+            const pendingContainer = document.getElementById('pendingTasks');
+            const completedContainer = document.getElementById('completedTasks');
+            
+            let pendingHTML = '';
+            let completedHTML = '';
+
+            tasks.forEach((task, index) => {
+                if (completedTasks.includes(index)) {
+                    completedHTML += createTaskHTML(task, index, true);
+                } else {
+                    pendingHTML += createTaskHTML(task, index, false);
+                }
+            });
+
+            pendingContainer.innerHTML = pendingHTML || '<div class="empty-message">Tất cả việc đã hoàn thành! 🎉</div>';
+            completedContainer.innerHTML = completedHTML || '<div class="empty-message">Chưa có việc nào được hoàn thành</div>';
+
+            updateStats();
+            updateProgress();
+        }
+
+        // Toggle trạng thái task
+        function toggleTask(index) {
+            const taskElement = document.querySelector(`[data-index="${index}"]`);
+            
+            if (completedTasks.includes(index)) {
+                // Bỏ tick - chuyển về pending
+                completedTasks = completedTasks.filter(i => i !== index);
+                taskElement.classList.remove('completed');
+            } else {
+                // Tick - chuyển thành completed
+                completedTasks.push(index);
+                taskElement.classList.add('completed');
+            }
+
+            saveData();
+            
+            // Delay để animation chạy xong rồi mới render lại
+            setTimeout(() => {
+                renderTasks();
+            }, 300);
+        }
+
+        // Cập nhật thống kê
+        function updateStats() {
+            document.getElementById('totalTasks').textContent = tasks.length;
+            document.getElementById('completedCount').textContent = completedTasks.length;
+            document.getElementById('remainingCount').textContent = tasks.length - completedTasks.length;
+        }
+
+        // Cập nhật thanh tiến trình
+        function updateProgress() {
+            const progress = (completedTasks.length / tasks.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        // Khởi tạo
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            renderTasks();
+            
+            // Kích hoạt AudioContext cho iOS (cần user interaction)
+            document.body.addEventListener('touchstart', function() {
+                if (typeof window.audioContextInitialized === 'undefined') {
+                    try {
+                        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        if (audioContext.state === 'suspended') {
+                            audioContext.resume();
+                        }
+                        window.audioContextInitialized = true;
+                    } catch (e) {
+                        console.log('Audio context init failed:', e);
+                    }
+                }
+            }, { once: true });
+            
+            // Ngăn chặn zoom khi double tap trên iOS
+            let lastTouchEnd = 0;
+            document.addEventListener('touchend', function (event) {
+                const now = (new Date()).getTime();
+                if (now - lastTouchEnd <= 300) {
+                    event.preventDefault();
+                }
+                lastTouchEnd = now;
+            }, false);
+            
+            // Prevent scroll bounce trên iOS
+            document.body.addEventListener('touchstart', function(e) {
+                if (e.target === document.body) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+            
+            document.body.addEventListener('touchend', function(e) {
+                if (e.target === document.body) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+            
+            document.body.addEventListener('touchmove', function(e) {
+                if (e.target === document.body) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+        });
+    </script>
+</body>
+</html>
