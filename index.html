@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Danh sách việc hàng ngày</title>
+    <title>📝 Việc hàng ngày</title>
     <style>
         * {
             margin: 0;
@@ -24,325 +24,490 @@
             background: white;
             border-radius: 20px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            overflow: hidden;
+            padding: 30px;
         }
 
-        .header {
-            background: linear-gradient(135deg, #ff6b6b, #ffd93d);
-            padding: 30px 20px;
+        h1 {
             text-align: center;
-            color: white;
-        }
-
-        .header h1 {
-            font-size: 2.2rem;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .progress-bar {
-            background: rgba(255,255,255,0.3);
-            height: 10px;
-            border-radius: 5px;
-            margin-top: 15px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            background: white;
-            height: 100%;
-            width: 0%;
-            border-radius: 5px;
-            transition: width 0.5s ease;
-        }
-
-        .todo-section {
-            padding: 20px;
-        }
-
-        .section-title {
-            font-size: 1.4rem;
-            margin-bottom: 15px;
             color: #333;
-            font-weight: 600;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
 
-        .pending-section {
-            border-bottom: 2px solid #f0f0f0;
-            padding-bottom: 20px;
-            margin-bottom: 20px;
+        .add-task {
+            display: flex;
+            margin-bottom: 30px;
+            gap: 10px;
         }
 
-        .todo-item {
+        #taskInput {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        #taskInput:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.2);
+        }
+
+        #addBtn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: transform 0.2s ease;
+        }
+
+        #addBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .task-list {
+            list-style: none;
+        }
+
+        .task-item {
+            background: #f8f9fa;
+            margin-bottom: 15px;
+            padding: 20px;
+            border-radius: 15px;
             display: flex;
             align-items: center;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 12px;
-            cursor: pointer;
+            gap: 15px;
             transition: all 0.3s ease;
-            border: 2px solid #f0f0f0;
-            background: white;
+            border-left: 5px solid #667eea;
         }
 
-        .todo-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            border-color: #667eea;
+        .task-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
         }
 
-        .todo-item.completed {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-            border-color: #4facfe;
-            animation: completedPulse 0.6s ease-out;
+        .task-item.completed {
+            background: #e8f5e8;
+            border-left-color: #28a745;
+            text-decoration: line-through;
+            opacity: 0.8;
         }
 
-        @keyframes completedPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        .todo-checkbox {
+        .task-checkbox {
             width: 24px;
             height: 24px;
-            margin-right: 15px;
+            border-radius: 50%;
+            border: 3px solid #667eea;
             cursor: pointer;
-            accent-color: #4facfe;
-            transform: scale(1.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
         }
 
-        .todo-text {
+        .task-checkbox.checked {
+            background: #28a745;
+            border-color: #28a745;
+        }
+
+        .task-checkbox.checked::after {
+            content: "✓";
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .task-text {
             flex: 1;
-            font-size: 1.1rem;
-            font-weight: 500;
+            font-size: 18px;
+            color: #333;
         }
 
-        .todo-item.completed .todo-text {
-            text-decoration: line-through;
+        .task-item.completed .task-text {
+            color: #666;
         }
 
-        .empty-message {
-            text-align: center;
-            color: #999;
-            font-style: italic;
-            padding: 20px;
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background: #c82333;
+            transform: scale(1.1);
         }
 
         .stats {
-            background: #f8f9fa;
+            margin-top: 30px;
+            text-align: center;
             padding: 20px;
-            border-top: 1px solid #e9ecef;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            font-size: 18px;
         }
 
-        .stat-item {
+        .no-tasks {
+            text-align: center;
+            color: #666;
+            font-size: 18px;
+            padding: 40px;
+            font-style: italic;
+        }
+
+        .celebration {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            padding: 20px 40px;
+            border-radius: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            z-index: 1000;
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.5);
+            transition: all 0.3s ease;
+            box-shadow: 0 20px 40px rgba(40, 167, 69, 0.3);
+        }
+
+        .celebration.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .sound-controls {
+            margin-bottom: 20px;
             text-align: center;
         }
 
-        .stat-number {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #4facfe;
+        .sound-toggle {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
         }
 
-        .stat-label {
-            font-size: 0.9rem;
-            color: #666;
-            margin-top: 5px;
+        .sound-toggle:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(40, 167, 69, 0.3);
+        }
+
+        .sound-toggle.muted {
+            background: linear-gradient(45deg, #dc3545, #c82333);
+        }
+
+        .volume-control {
+            margin-top: 10px;
+        }
+
+        .volume-slider {
+            width: 150px;
+            margin: 0 10px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>📝 Việc hàng ngày</h1>
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
+        <h1>📝 Việc hàng ngày</h1>
+        
+        <div class="sound-controls">
+            <button class="sound-toggle" id="soundToggle">🔊 Âm thanh: BẬT</button>
+            <div class="volume-control">
+                <span>🔉</span>
+                <input type="range" min="0" max="1" step="0.1" value="0.7" class="volume-slider" id="volumeSlider">
+                <span>🔊</span>
             </div>
         </div>
         
-        <div class="todo-section">
-            <div class="pending-section">
-                <h2 class="section-title">🎯 Cần hoàn thành</h2>
-                <div id="pendingTasks"></div>
-            </div>
-            
-            <div class="completed-section">
-                <h2 class="section-title">✅ Đã hoàn thành</h2>
-                <div id="completedTasks">
-                    <div class="empty-message">Chưa có việc nào được hoàn thành</div>
-                </div>
-            </div>
+        <div class="add-task">
+            <input type="text" id="taskInput" placeholder="Thêm việc cần làm..." maxlength="100">
+            <button id="addBtn">Thêm</button>
         </div>
 
-        <div class="stats">
-            <div class="stat-item">
-                <div class="stat-number" id="totalTasks">10</div>
-                <div class="stat-label">Tổng việc</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number" id="completedCount">0</div>
-                <div class="stat-label">Đã xong</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number" id="remainingCount">10</div>
-                <div class="stat-label">Còn lại</div>
-            </div>
+        <ul class="task-list" id="taskList">
+            <!-- Tasks will be added here -->
+        </ul>
+
+        <div class="stats" id="stats">
+            <span id="completedCount">0</span> việc đã hoàn thành / <span id="totalCount">0</span> việc tổng cộng
         </div>
     </div>
 
+    <div class="celebration" id="celebration">
+        🎉 Bạn đã làm tốt lắm! 🎉
+    </div>
+
     <script>
-        // Danh sách việc cần làm
-        const tasks = [
-            "Dọn dẹp chỗ ngủ",
-            "Tắm rửa thay quần áo",
-            "Ăn sáng",
-            "Uống sữa",
-            "Đánh răng",
-            "Đi học",
-            "Học Tiếng anh",
-            "Đọc sách",
-            "Gấp quần áo",
-            "Chùi toilet"
-        ];
-
-        let completedTasks = [];
-
-        // Load dữ liệu đã lưu
-        function loadData() {
-            const saved = localStorage.getItem('dailyTasks');
-            if (saved) {
-                completedTasks = JSON.parse(saved);
+        class TodoApp {
+            constructor() {
+                this.tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+                this.taskIdCounter = parseInt(localStorage.getItem('taskIdCounter')) || 1;
+                this.soundEnabled = localStorage.getItem('soundEnabled') !== 'false';
+                this.volume = parseFloat(localStorage.getItem('volume')) || 0.7;
+                
+                this.taskInput = document.getElementById('taskInput');
+                this.addBtn = document.getElementById('addBtn');
+                this.taskList = document.getElementById('taskList');
+                this.completedCount = document.getElementById('completedCount');
+                this.totalCount = document.getElementById('totalCount');
+                this.celebration = document.getElementById('celebration');
+                this.soundToggle = document.getElementById('soundToggle');
+                this.volumeSlider = document.getElementById('volumeSlider');
+                
+                // Tạo audio context cho âm thanh
+                this.audioContext = null;
+                this.oscillator = null;
+                
+                this.init();
             }
-        }
 
-        // Lưu dữ liệu
-        function saveData() {
-            localStorage.setItem('dailyTasks', JSON.stringify(completedTasks));
-        }
+            init() {
+                this.addBtn.addEventListener('click', () => this.addTask());
+                this.taskInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.addTask();
+                    }
+                });
 
-        // Tạo HTML cho một task
-        function createTaskHTML(task, index, isCompleted = false) {
-            return `
-                <div class="todo-item ${isCompleted ? 'completed' : ''}" data-index="${index}">
-                    <input type="checkbox" class="todo-checkbox" ${isCompleted ? 'checked' : ''} 
-                           onchange="toggleTask(${index})">
-                    <span class="todo-text">${task}</span>
-                </div>
-            `;
-        }
+                this.soundToggle.addEventListener('click', () => this.toggleSound());
+                this.volumeSlider.addEventListener('input', (e) => this.updateVolume(e.target.value));
 
-        // Render danh sách
-        function renderTasks() {
-            const pendingContainer = document.getElementById('pendingTasks');
-            const completedContainer = document.getElementById('completedTasks');
-            
-            let pendingHTML = '';
-            let completedHTML = '';
+                this.updateSoundToggle();
+                this.volumeSlider.value = this.volume;
+                this.renderTasks();
+                this.updateStats();
+            }
 
-            tasks.forEach((task, index) => {
-                if (completedTasks.includes(index)) {
-                    completedHTML += createTaskHTML(task, index, true);
-                } else {
-                    pendingHTML += createTaskHTML(task, index, false);
+            addTask() {
+                const taskText = this.taskInput.value.trim();
+                if (taskText === '') return;
+
+                const task = {
+                    id: this.taskIdCounter++,
+                    text: taskText,
+                    completed: false,
+                    createdAt: new Date().toISOString()
+                };
+
+                this.tasks.unshift(task);
+                this.taskInput.value = '';
+                this.saveToLocalStorage();
+                this.renderTasks();
+                this.updateStats();
+            }
+
+            toggleTask(taskId) {
+                const task = this.tasks.find(t => t.id === taskId);
+                if (task) {
+                    task.completed = !task.completed;
+                    
+                    // Phát âm thanh khi hoàn thành task
+                    if (task.completed) {
+                        this.playCompletionSound();
+                        this.showCelebration();
+                    }
+                    
+                    this.saveToLocalStorage();
+                    this.renderTasks();
+                    this.updateStats();
                 }
-            });
-
-            pendingContainer.innerHTML = pendingHTML || '<div class="empty-message">Tất cả việc đã hoàn thành! 🎉</div>';
-            completedContainer.innerHTML = completedHTML || '<div class="empty-message">Chưa có việc nào được hoàn thành</div>';
-
-            updateStats();
-            updateProgress();
-        }
-
-        // Toggle trạng thái task
-        function toggleTask(index) {
-            const taskElement = document.querySelector(`[data-index="${index}"]`);
-            
-            if (completedTasks.includes(index)) {
-                // Bỏ tick - chuyển về pending
-                completedTasks = completedTasks.filter(i => i !== index);
-                taskElement.classList.remove('completed');
-            } else {
-                // Tick - chuyển thành completed
-                completedTasks.push(index);
-                taskElement.classList.add('completed');
             }
 
-            saveData();
-            
-            // Delay để animation chạy xong rồi mới render lại
-            setTimeout(() => {
-                renderTasks();
-            }, 300);
-        }
+            deleteTask(taskId) {
+                this.tasks = this.tasks.filter(t => t.id !== taskId);
+                this.saveToLocalStorage();
+                this.renderTasks();
+                this.updateStats();
+            }
 
-        // Cập nhật thống kê
-        function updateStats() {
-            document.getElementById('totalTasks').textContent = tasks.length;
-            document.getElementById('completedCount').textContent = completedTasks.length;
-            document.getElementById('remainingCount').textContent = tasks.length - completedTasks.length;
-        }
+            playCompletionSound() {
+                if (!this.soundEnabled) return;
 
-        // Cập nhật thanh tiến trình
-        function updateProgress() {
-            const progress = (completedTasks.length / tasks.length) * 100;
-            document.getElementById('progressFill').style.width = progress + '%';
-        }
-
-        // Khởi tạo
-        document.addEventListener('DOMContentLoaded', function() {
-            loadData();
-            renderTasks();
-            
-            // Kích hoạt AudioContext cho iOS (cần user interaction)
-            document.body.addEventListener('touchstart', function() {
-                if (typeof window.audioContextInitialized === 'undefined') {
-                    try {
-                        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                        if (audioContext.state === 'suspended') {
-                            audioContext.resume();
+                try {
+                    // Phương pháp 1: Thử Web Speech API trước (cho desktop)
+                    if ('speechSynthesis' in window && this.isDesktop()) {
+                        const utterance = new SpeechSynthesisUtterance('Bạn đã làm tốt lắm');
+                        utterance.lang = 'vi-VN';
+                        utterance.rate = 0.9;
+                        utterance.pitch = 1.2;
+                        utterance.volume = this.volume;
+                        
+                        const voices = speechSynthesis.getVoices();
+                        const vietnameseVoice = voices.find(voice => 
+                            voice.lang.includes('vi') || voice.name.includes('Vi')
+                        );
+                        
+                        if (vietnameseVoice) {
+                            utterance.voice = vietnameseVoice;
                         }
-                        window.audioContextInitialized = true;
-                    } catch (e) {
-                        console.log('Audio context init failed:', e);
+                        
+                        speechSynthesis.speak(utterance);
+                    } else {
+                        // Phương pháp 2: Sử dụng Web Audio API tạo âm thanh thành công
+                        this.playSuccessBeep();
+                    }
+                } catch (error) {
+                    console.log('Không thể phát âm thanh:', error);
+                    // Fallback: chỉ hiển thị animation
+                }
+            }
+
+            playSuccessBeep() {
+                try {
+                    // Khởi tạo Audio Context nếu chưa có
+                    if (!this.audioContext) {
+                        this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    }
+
+                    // Tạo một chuỗi âm thanh vui vẻ
+                    const frequencies = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                    const duration = 0.15;
+
+                    frequencies.forEach((freq, index) => {
+                        setTimeout(() => {
+                            this.playBeep(freq, duration);
+                        }, index * 100);
+                    });
+
+                } catch (error) {
+                    console.log('Web Audio API không khả dụng:', error);
+                    // Fallback cuối cùng: vibration trên mobile
+                    if ('vibrate' in navigator) {
+                        navigator.vibrate([100, 50, 100, 50, 200]);
                     }
                 }
-            }, { once: true });
-            
-            // Ngăn chặn zoom khi double tap trên iOS
-            let lastTouchEnd = 0;
-            document.addEventListener('touchend', function (event) {
-                const now = (new Date()).getTime();
-                if (now - lastTouchEnd <= 300) {
-                    event.preventDefault();
+            }
+
+            playBeep(frequency, duration) {
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+
+                oscillator.frequency.value = frequency;
+                oscillator.type = 'sine';
+
+                gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
+                gainNode.gain.linearRampToValueAtTime(this.volume * 0.3, this.audioContext.currentTime + 0.01);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + duration);
+
+                oscillator.start(this.audioContext.currentTime);
+                oscillator.stop(this.audioContext.currentTime + duration);
+            }
+
+            isDesktop() {
+                return !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            }
+
+            showCelebration() {
+                this.celebration.classList.add('show');
+                setTimeout(() => {
+                    this.celebration.classList.remove('show');
+                }, 2000);
+            }
+
+            toggleSound() {
+                this.soundEnabled = !this.soundEnabled;
+                this.updateSoundToggle();
+                this.saveToLocalStorage();
+            }
+
+            updateSoundToggle() {
+                if (this.soundEnabled) {
+                    this.soundToggle.textContent = '🔊 Âm thanh: BẬT';
+                    this.soundToggle.classList.remove('muted');
+                } else {
+                    this.soundToggle.textContent = '🔇 Âm thanh: TẮT';
+                    this.soundToggle.classList.add('muted');
                 }
-                lastTouchEnd = now;
-            }, false);
-            
-            // Prevent scroll bounce trên iOS
-            document.body.addEventListener('touchstart', function(e) {
-                if (e.target === document.body) {
-                    e.preventDefault();
+            }
+
+            updateVolume(value) {
+                this.volume = parseFloat(value);
+                this.saveToLocalStorage();
+            }
+
+            renderTasks() {
+                this.taskList.innerHTML = '';
+
+                if (this.tasks.length === 0) {
+                    this.taskList.innerHTML = '<li class="no-tasks">Chưa có việc nào được thêm</li>';
+                    return;
                 }
-            }, { passive: false });
-            
-            document.body.addEventListener('touchend', function(e) {
-                if (e.target === document.body) {
-                    e.preventDefault();
-                }
-            }, { passive: false });
-            
-            document.body.addEventListener('touchmove', function(e) {
-                if (e.target === document.body) {
-                    e.preventDefault();
-                }
-            }, { passive: false });
-        });
+
+                this.tasks.forEach(task => {
+                    const taskItem = document.createElement('li');
+                    taskItem.className = `task-item ${task.completed ? 'completed' : ''}`;
+                    
+                    taskItem.innerHTML = `
+                        <div class="task-checkbox ${task.completed ? 'checked' : ''}" 
+                             onclick="todoApp.toggleTask(${task.id})"></div>
+                        <span class="task-text">${this.escapeHtml(task.text)}</span>
+                        <button class="delete-btn" onclick="todoApp.deleteTask(${task.id})" 
+                                title="Xóa việc này">×</button>
+                    `;
+
+                    this.taskList.appendChild(taskItem);
+                });
+            }
+
+            updateStats() {
+                const completed = this.tasks.filter(task => task.completed).length;
+                const total = this.tasks.length;
+                
+                this.completedCount.textContent = completed;
+                this.totalCount.textContent = total;
+            }
+
+            saveToLocalStorage() {
+                localStorage.setItem('tasks', JSON.stringify(this.tasks));
+                localStorage.setItem('taskIdCounter', this.taskIdCounter.toString());
+                localStorage.setItem('soundEnabled', this.soundEnabled.toString());
+                localStorage.setItem('volume', this.volume.toString());
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        }
+
+        // Khởi tạo ứng dụng
+        const todoApp = new TodoApp();
+
+        // Load voices khi trang web được tải (cho desktop)
+        if ('speechSynthesis' in window) {
+            speechSynthesis.onvoiceschanged = function() {
+                // Voices đã được tải
+            };
+        }
     </script>
 </body>
 </html>
